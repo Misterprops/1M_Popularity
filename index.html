@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>1M Spotify</title>
+</head>
+
+<body>
+    <header>
+
+    </header>
+    <main>
+        <form id="formulario">
+
+            <button onclick=call>Click</button>
+        </form>
+    </main>
+    <footer>
+        <div>
+            <span>Desarrollado por</span>
+            <span>Andres Camilo Rodriguez Salinas</span>
+            <span>Heiver Alejandro Suarez Cifuentes</span>
+        </div>
+    </footer>
+</body>
+
+</html>
+
+<script>
+    const cols = 'https://dashboard.render.com/web/srv-d1hrrr3ipnbc73fjkqq0/api/columns';
+    fetch(cols).then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la respuesta de la API');
+        }
+        return response.json();
+    }).then(data => {
+        // Mostrar los datos en el frontend
+        formulario = document.getElementById("formulario")
+        console.log(data)
+        for (const column in data) {
+            console.log(data[column])
+            if (data[column] == "genre" || data[column].includes("name")) {
+                select = document.createElement('select')
+                opciones(data[column], select)
+                select.id = data[column]
+                formulario.appendChild(select)
+            } else {
+                input = document.createElement('input')
+                input.setAttribute("type", "number")
+                input.id = data[column]
+                formulario.appendChild(input)
+            }
+        }
+    }).catch(error => {
+        console.error('Hubo un problema con la petición:', error);
+    });
+
+    function opciones(column, select) {
+        const opt = 'https://dashboard.render.com/web/srv-d1hrrr3ipnbc73fjkqq0/api/info';
+        fetch(opt, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                columna: column,
+            })
+        }).then(res => res.json()).then(data => {
+            for (const opcion in data) {
+                op=document.createElement('option')
+                op.innerText = data[opcion]
+                op.value = data[opcion]
+                select.appendChild(op)
+            }
+        });
+    }
+
+    const call = () => {
+        // Llamada a la API con fetch
+        // URL del backend
+        const apiUrl = 'https://dashboard.render.com/web/srv-d1hrrr3ipnbc73fjkqq0/api/data';
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta de la API');
+                }
+                return response.json(); // parsear el JSON de la respuesta
+            })
+            .then(data => {
+                // Mostrar los datos en el frontend
+                document.getElementById('resultado').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                console.error('Hubo un problema con la petición:', error);
+                document.getElementById('resultado').textContent = 'Error al cargar los datos.';
+            });
+    }
+
+</script>
