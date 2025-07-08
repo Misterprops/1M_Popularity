@@ -1,0 +1,100 @@
+header {
+    height: 8vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: greenyellow;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    background-color: #6f4e37;
+}
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding-top: 5%;
+}
+
+#comparacion label {
+    width: 25%;
+}
+
+#comparacion input {
+    width: 25%;
+}
+
+#comparacion button {
+    width: 25%;
+}
+
+#sect_res_bus {
+    display: flex;
+    flex-direction: column;
+    padding-top: 3%;
+}
+
+#sect_res_bus label {
+    font-size: 200%;
+    font-weight: bold;
+}
+
+#res_comparacion {
+    display: flex;
+    flex-direction: column;
+    padding-top: 3%;
+}
+
+#res_comparacion label {
+    font-size: 200%;
+    font-weight: bold;
+    width: 100%;
+}
+
+label {
+    width: 10%;
+    padding: 0.5% 0.1% 0.5% 0.1%;
+    color: white;
+}
+
+#resultado_busqueda {
+    width: 100%;
+}
+
+input {
+    width: 14%;
+    border: dotted red;
+}
+
+input:focus-visible {
+    border: none;
+}
+
+button {
+    background-color: aliceblue;
+    border: double;
+    width: 25%;
+}
+
+footer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: greenyellow;
+}
+
+footer div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    height: 10vh;
+}
