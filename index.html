@@ -11,41 +11,48 @@
 
     </header>
     <main>
-        <form id="formulario">
-            <label for="artist_name">Nombre del artista</label>
-            <input id="artist_name" />
+        <form id="busqueda">
             <label for="year">Año de publicacion</label>
-            <input id="year" />
+            <input id="year" type="number" />
             <label for="genre">Genero de la cancion</label>
             <input id="genre" />
             <label for="danceability">Bailabilidad (0-10)</label>
             <input id="danceability" type="number" min="0" max="10" />
             <label for="energy">Intensidad y actividad (0-10)</label>
-            <input id="energy" />
+            <input id="energy" type="number" min="0" max="10" />
             <label for="key">Clave musical (0-11)</label>
-            <input id="key" />
-            <label for="Nombre del artista">Nombre del artista</label>
-            <input id="Nombre del artista" />
-            <label for="Nombre del artista">Nombre del artista</label>
-            <input id="Nombre del artista" />
-            <label for="Nombre del artista">Nombre del artista</label>
-            <input id="Nombre del artista" />
-            <label for="Nombre del artista">Nombre del artista</label>
-            <input id="Nombre del artista" />
-            <label for="Nombre del artista">Nombre del artista</label>
-            <input id="Nombre del artista" />
-            <label for="Nombre del artista">Nombre del artista</label>
-            <input id="Nombre del artista" />
-            <label for="Nombre del artista">Nombre del artista</label>
-            <input id="Nombre del artista" />
-            <label for="Nombre del artista">Nombre del artista</label>
-            <input id="Nombre del artista" />
-            <label for="Nombre del artista">Nombre del artista</label>
-            <input id="Nombre del artista" />
-            <label for="Nombre del artista">Nombre del artista</label>
-            <input id="Nombre del artista" />
-            <button onclick=call>Click</button>
+            <input id="key" type="number" min="0" max="11" />
+            <label for="loudness">Promedio de decibeles (-60-10)</label>
+            <input id="loudness" type="number" min="-60" max="10" />
+            <label for="mode">Modo del track (1-Mayor, 0-Menor)</label>
+            <input id="mode" type="number" min="0" max="1" />
+            <label for="speechiness">Cantidad de letra (0-100)%</label>
+            <input id="speechiness" type="number" min="0" max="100" />
+            <label for="acousticness">Porcentaje acustico (0-100)</label>
+            <input id="acousticness" type="number" min="0" max="100" />
+            <label for="instrumentalness">Porcentaje de instrumental (0-100)</label>
+            <input id="instrumentalness" type="number" min="0" max="100" />
+            <label for="liveness">Probabilidad de estar en vivo (0-100)</label>
+            <input id="liveness" type="number" min="0" max="100" />
+            <label for="valence">Porcentaje emocional (0-triste, 1-feliz)</label>
+            <input id="valence" type="number" min="0" max="1" />
+            <label for="tempo">Ritmo de Beats por minuto</label>
+            <input id="tempo" type="number" min="0" />
+            <label for="duration_ms">Duracion en milisegundos</label>
+            <input id="duration_ms" type="number" min="0" />
+            <label for="time_signature">Firma de tiempo (0-5)</label>
+            <input id="time_signature" type="number" min="0" max="5" />
+            <button id="search">Click</button>
         </form>
+        <label id="resultado_busqueda"></label>
+        <form id="comparacion">
+            <label for="spotify_id">Ingrese un Id de Spotify de la cancion para comparar sus resultados</label>
+            <input id="spotify_id" />
+            <button id="compare">Click</button>
+        </form>
+        <label id="artist_name"></label>
+        <label id="track_name"></label>
+        <label id="popularity"></label>
     </main>
     <footer>
         <div>
@@ -59,89 +66,75 @@
 </html>
 
 <script>
-    const cols = 'https://onem-popularity.onrender.com/api/columns';
-    fetch(cols).then(response => {
-        if (!response.ok) {
-            throw new Error('Error en la respuesta de la API');
-        }
-        return response.json();
-    }).then(data => {
-        // Mostrar los datos en el frontend
-        formulario = document.getElementById("formulario")
-        console.log(data)
-        for (const column in data) {
-            console.log(data[column])
-            if (data[column] == "genre" || data[column].includes("name")) {
-                select = document.createElement('select')
-                opciones(data[column], select)
-                select.id = data[column]
-                formulario.appendChild(select)
-            } else {
-                input = document.createElement('input')
-                input.setAttribute("type", "number")
-                input.id = data[column]
-                formulario.appendChild(input)
-            }
-        }
-    }).catch(error => {
-        console.error('Hubo un problema con la petición:', error);
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("search").addEventListener("click", function (event) {
+            event.preventDefault()
+            predict()
+        });
+        document.getElementById("compare").addEventListener("click", function (event) {
+            event.preventDefault()
+            compare()
+        });
     });
 
-    function opciones(column, select) {
-        const opt = 'https://onem-popularity.onrender.com/api/info';
-        fetch(opt, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                columna: column,
-            })
-        }).then(res => res.json()).then(data => {
-            for (const opcion in data) {
-                op = document.createElement('option')
-                op.innerText = data[opcion]
-                op.value = data[opcion]
-                select.appendChild(op)
-            }
-        });
-    }
-
-    const call = () => {
-        // Llamada a la API con fetch
-        // URL del backend
-        const apiUrl = 'https://36c5881d6d05.ngrok-free.app/api/predecir';
+    // Llamada a la API con fetch
+    // URL del backend
+    const predict = () => {
+        const apiUrl = 'https://496795c5b5dc.ngrok-free.app/api/predecir';
         fetch(apiUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                genre: "pop",
-                year: 2025,
-                danceability: 0.70,
-                energy: 0.85,
-                key: 0,
-                mode: 1,
-                speechiness: 0.04,
-                acousticness: 0.08,
-                instrumentalness: 0.0,
-                liveness: 0.1,
-                valence: 0.82,
-                tempo: 160,
-                loudness: -4.8,
-                duration_ms: 203000,
-                explicit: 0,
-                time_signature: 4
+                genre: document.getElementById("genre").value,
+                year: document.getElementById("year").value,
+                danceability: parseInt(document.getElementById("danceability").value) / 10,
+                energy: parseInt(document.getElementById("energy").value) / 10,
+                key: document.getElementById("key").value,
+                mode: document.getElementById("mode").value,
+                speechiness: parseInt(document.getElementById("speechiness").value) / 100,
+                acousticness: parseInt(document.getElementById("acousticness").value) / 100,
+                instrumentalness: parseInt(document.getElementById("instrumentalness").value) / 100,
+                liveness: parseInt(document.getElementById("liveness").value) / 100,
+                valence: document.getElementById("valence").value,
+                tempo: document.getElementById("tempo").value,
+                loudness: document.getElementById("loudness").value,
+                duration_ms: document.getElementById("duration_ms").value,
+                time_signature: document.getElementById("time_signature").value
             })
         })
             .then(response => response.json())
             .then(data => {
                 console.log("✅ Predicción recibida:", data);
+                document.getElementById("resultado_busqueda").textContent = "Popularidad predicha: " + data.prediccion
             })
             .catch(error => {
                 console.error('Hubo un problema con la petición:', error);
-                document.getElementById('resultado').textContent = 'Error al cargar los datos.';
+                alert('Error al cargar los datos.');
+            });
+    }
+    const compare = () => {
+        const apiUrl = 'https://496795c5b5dc.ngrok-free.app/api/comparar';
+        fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                time_signature: document.getElementById("time_signature").value
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log("✅ Predicción recibida:", data);
+                document.getElementById("artist_name").textContent = "Nombre del artista: " + data.artist_name
+                document.getElementById("track_name").textContent = "Nombre de la cancion: " + data.track_name
+                document.getElementById("popularity").textContent = "Popularidad: " + data.popularity
+            })
+            .catch(error => {
+                console.error('Hubo un problema con la petición:', error);
+                alert('Error al cargar los datos.');
             });
     }
 
