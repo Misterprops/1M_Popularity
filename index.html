@@ -12,7 +12,38 @@
     </header>
     <main>
         <form id="formulario">
-
+            <label for="artist_name">Nombre del artista</label>
+            <input id="artist_name" />
+            <label for="year">Año de publicacion</label>
+            <input id="year" />
+            <label for="genre">Genero de la cancion</label>
+            <input id="genre" />
+            <label for="danceability">Bailabilidad (0-10)</label>
+            <input id="danceability" type="number" min="0" max="10" />
+            <label for="energy">Intensidad y actividad (0-10)</label>
+            <input id="energy" />
+            <label for="key">Clave musical (0-11)</label>
+            <input id="key" />
+            <label for="Nombre del artista">Nombre del artista</label>
+            <input id="Nombre del artista" />
+            <label for="Nombre del artista">Nombre del artista</label>
+            <input id="Nombre del artista" />
+            <label for="Nombre del artista">Nombre del artista</label>
+            <input id="Nombre del artista" />
+            <label for="Nombre del artista">Nombre del artista</label>
+            <input id="Nombre del artista" />
+            <label for="Nombre del artista">Nombre del artista</label>
+            <input id="Nombre del artista" />
+            <label for="Nombre del artista">Nombre del artista</label>
+            <input id="Nombre del artista" />
+            <label for="Nombre del artista">Nombre del artista</label>
+            <input id="Nombre del artista" />
+            <label for="Nombre del artista">Nombre del artista</label>
+            <input id="Nombre del artista" />
+            <label for="Nombre del artista">Nombre del artista</label>
+            <input id="Nombre del artista" />
+            <label for="Nombre del artista">Nombre del artista</label>
+            <input id="Nombre del artista" />
             <button onclick=call>Click</button>
         </form>
     </main>
@@ -28,7 +59,7 @@
 </html>
 
 <script>
-    const cols = 'https://dashboard.render.com/web/srv-d1hrrr3ipnbc73fjkqq0/api/columns';
+    const cols = 'https://onem-popularity.onrender.com/api/columns';
     fetch(cols).then(response => {
         if (!response.ok) {
             throw new Error('Error en la respuesta de la API');
@@ -57,7 +88,7 @@
     });
 
     function opciones(column, select) {
-        const opt = 'https://dashboard.render.com/web/srv-d1hrrr3ipnbc73fjkqq0/api/info';
+        const opt = 'https://onem-popularity.onrender.com/api/info';
         fetch(opt, {
             method: "POST",
             headers: {
@@ -68,7 +99,7 @@
             })
         }).then(res => res.json()).then(data => {
             for (const opcion in data) {
-                op=document.createElement('option')
+                op = document.createElement('option')
                 op.innerText = data[opcion]
                 op.value = data[opcion]
                 select.appendChild(op)
@@ -79,17 +110,34 @@
     const call = () => {
         // Llamada a la API con fetch
         // URL del backend
-        const apiUrl = 'https://dashboard.render.com/web/srv-d1hrrr3ipnbc73fjkqq0/api/data';
-        fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error en la respuesta de la API');
-                }
-                return response.json(); // parsear el JSON de la respuesta
+        const apiUrl = 'https://36c5881d6d05.ngrok-free.app/api/predecir';
+        fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                genre: "pop",
+                year: 2025,
+                danceability: 0.70,
+                energy: 0.85,
+                key: 0,
+                mode: 1,
+                speechiness: 0.04,
+                acousticness: 0.08,
+                instrumentalness: 0.0,
+                liveness: 0.1,
+                valence: 0.82,
+                tempo: 160,
+                loudness: -4.8,
+                duration_ms: 203000,
+                explicit: 0,
+                time_signature: 4
             })
+        })
+            .then(response => response.json())
             .then(data => {
-                // Mostrar los datos en el frontend
-                document.getElementById('resultado').textContent = JSON.stringify(data, null, 2);
+                console.log("✅ Predicción recibida:", data);
             })
             .catch(error => {
                 console.error('Hubo un problema con la petición:', error);
