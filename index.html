@@ -3,12 +3,18 @@
 
 <head>
     <meta charset="utf-8" />
+    <link rel="stylesheet" href="./index.css" />
+    <link rel="stylesheet" href="./reset.css" />
     <title>1M Spotify</title>
 </head>
 
 <body>
     <header>
-
+        <a href="https://www.kaggle.com/datasets/amitanshjoshi/spotify-1million-tracks/data">Kaggle</a>
+        <a href="https://xgboost.readthedocs.io/en/stable/python/python_intro.html">XGBoost</a>
+        <a href="https://ngrok.com/">Ngrok</a>
+        <a href="https://github.com/Misterprops/1M_Popularity">Git</a>
+        <a href="https://developer.spotify.com/documentation/web-api/reference/get-track">Spotify api</a>
     </header>
     <main>
         <form id="busqueda">
@@ -17,42 +23,46 @@
             <label for="genre">Genero de la cancion</label>
             <input id="genre" />
             <label for="danceability">Bailabilidad (0-10)</label>
-            <input id="danceability" type="number" min="0" max="10" />
+            <input id="danceability" type="number" min="0" max="10" step="0.01" />
             <label for="energy">Intensidad y actividad (0-10)</label>
-            <input id="energy" type="number" min="0" max="10" />
+            <input id="energy" type="number" min="0" max="10" step="0.01" />
             <label for="key">Clave musical (0-11)</label>
             <input id="key" type="number" min="0" max="11" />
             <label for="loudness">Promedio de decibeles (-60-10)</label>
-            <input id="loudness" type="number" min="-60" max="10" />
+            <input id="loudness" type="number" min="-60" max="10" step="0.01" />
             <label for="mode">Modo del track (1-Mayor, 0-Menor)</label>
             <input id="mode" type="number" min="0" max="1" />
             <label for="speechiness">Cantidad de letra (0-100)%</label>
-            <input id="speechiness" type="number" min="0" max="100" />
+            <input id="speechiness" type="number" min="0" max="100" step="0.01" />
             <label for="acousticness">Porcentaje acustico (0-100)</label>
-            <input id="acousticness" type="number" min="0" max="100" />
+            <input id="acousticness" type="number" min="0" max="100" step="0.01" />
             <label for="instrumentalness">Porcentaje de instrumental (0-100)</label>
-            <input id="instrumentalness" type="number" min="0" max="100" />
+            <input id="instrumentalness" type="number" min="0" max="100" step="0.01" />
             <label for="liveness">Probabilidad de estar en vivo (0-100)</label>
-            <input id="liveness" type="number" min="0" max="100" />
+            <input id="liveness" type="number" min="0" max="100" step="0.01" />
             <label for="valence">Porcentaje emocional (0-triste, 1-feliz)</label>
-            <input id="valence" type="number" min="0" max="1" />
+            <input id="valence" type="number" min="0" max="1" step="0.01" />
             <label for="tempo">Ritmo de Beats por minuto</label>
-            <input id="tempo" type="number" min="0" />
+            <input id="tempo" type="number" min="0" step="0.01" />
             <label for="duration_ms">Duracion en milisegundos</label>
             <input id="duration_ms" type="number" min="0" />
             <label for="time_signature">Firma de tiempo (0-5)</label>
             <input id="time_signature" type="number" min="0" max="5" />
             <button id="search">Click</button>
         </form>
-        <label id="resultado_busqueda"></label>
+        <section id="sect_res_bus">
+            <label id="resultado_busqueda"></label>
+        </section>
         <form id="comparacion">
             <label for="spotify_id">Ingrese un Id de Spotify de la cancion para comparar sus resultados</label>
             <input id="spotify_id" />
             <button id="compare">Click</button>
         </form>
-        <label id="artist_name"></label>
-        <label id="track_name"></label>
-        <label id="popularity"></label>
+        <section id="res_comparacion">
+            <label id="artist_name"></label>
+            <label id="track_name"></label>
+            <label id="popularity"></label>
+        </section>
     </main>
     <footer>
         <div>
@@ -66,6 +76,13 @@
 </html>
 
 <script>
+    const filler = (name, data) => {
+        console.log(name + '...' + data)
+        data = data ? data : '0'
+        document.getElementById(name).value = data
+        return data
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("search").addEventListener("click", function (event) {
             event.preventDefault()
@@ -80,28 +97,28 @@
     // Llamada a la API con fetch
     // URL del backend
     const predict = () => {
-        const apiUrl = 'https://496795c5b5dc.ngrok-free.app/api/predecir';
+        const apiUrl = 'https://3483d17093a5.ngrok-free.app/api/predecir';
         fetch(apiUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                genre: document.getElementById("genre").value,
-                year: document.getElementById("year").value,
-                danceability: parseInt(document.getElementById("danceability").value) / 10,
-                energy: parseInt(document.getElementById("energy").value) / 10,
-                key: document.getElementById("key").value,
-                mode: document.getElementById("mode").value,
-                speechiness: parseInt(document.getElementById("speechiness").value) / 100,
-                acousticness: parseInt(document.getElementById("acousticness").value) / 100,
-                instrumentalness: parseInt(document.getElementById("instrumentalness").value) / 100,
-                liveness: parseInt(document.getElementById("liveness").value) / 100,
-                valence: document.getElementById("valence").value,
-                tempo: document.getElementById("tempo").value,
-                loudness: document.getElementById("loudness").value,
-                duration_ms: document.getElementById("duration_ms").value,
-                time_signature: document.getElementById("time_signature").value
+                genre: document.getElementById("genre").value == '' ? filler('genre', 'unknown') : document.getElementById("genre").value,
+                year: document.getElementById("year").value == '' ? filler('year', '2025') : document.getElementById("year").value,
+                danceability: document.getElementById("danceability").value == '' ? filler('danceability') : parseFloat(document.getElementById("danceability").value) / 10,
+                energy: document.getElementById("energy").value == '' ? filler('energy') : parseFloat(document.getElementById("energy").value) / 10,
+                key: document.getElementById("key").value == '' ? filler('key', '-60') : document.getElementById("key").value,
+                mode: document.getElementById("mode").value == '' ? filler('mode') : document.getElementById("mode").value,
+                speechiness: document.getElementById("speechiness").value == '' ? filler('speechiness') : parseFloat(document.getElementById("speechiness").value) / 100,
+                acousticness: document.getElementById("acousticness").value == '' ? filler('acousticness') : parseFloat(document.getElementById("acousticness").value) / 100,
+                instrumentalness: document.getElementById("instrumentalness").value == '' ? filler('instrumentalness') : parseFloat(document.getElementById("instrumentalness").value) / 100,
+                liveness: document.getElementById("liveness").value == '' ? filler('liveness') : parseFloat(document.getElementById("liveness").value) / 100,
+                valence: document.getElementById("valence").value == '' ? filler('valence') : document.getElementById("valence").value,
+                tempo: document.getElementById("tempo").value == '' ? filler('tempo') : document.getElementById("tempo").value,
+                loudness: document.getElementById("loudness").value == '' ? filler('loudness') : document.getElementById("loudness").value,
+                duration_ms: document.getElementById("duration_ms").value == '' ? filler('duration_ms', '120000') : document.getElementById("duration_ms").value,
+                time_signature: document.getElementById("time_signature").value == '' ? filler('time_signature') : document.getElementById("time_signature").value
             })
         })
             .then(response => response.json())
@@ -110,19 +127,19 @@
                 document.getElementById("resultado_busqueda").textContent = "Popularidad predicha: " + data.prediccion
             })
             .catch(error => {
-                console.error('Hubo un problema con la petición:', error);
+                console.log('Hubo un problema con la petición:', error);
                 alert('Error al cargar los datos.');
             });
     }
     const compare = () => {
-        const apiUrl = 'https://496795c5b5dc.ngrok-free.app/api/comparar';
+        const apiUrl = 'https://3483d17093a5.ngrok-free.app/api/comparar';
         fetch(apiUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                time_signature: document.getElementById("time_signature").value
+                id: document.getElementById("spotify_id").value == '' ? filler('spotify_id', '5Ct010aQ4rroKyjKhTlS7I') : document.getElementById("spotify_id").value
             })
         })
             .then(response => response.json())
